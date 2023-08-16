@@ -63,16 +63,12 @@ class Eggs:
 
 class Ham:
     def __lt__(self, other: Ham) -> bool:
-        if not isinstance(other, Ham):
-            return NotImplemented
-        return True
+        return NotImplemented if not isinstance(other, Ham) else True
 
 
 class Bacon:
     def __gt__(self, other: Bacon) -> bool:
-        if not isinstance(other, Bacon):
-            return NotImplemented
-        return True
+        return NotImplemented if not isinstance(other, Bacon) else True
 
 
 case.assertGreater(5.8, 3)

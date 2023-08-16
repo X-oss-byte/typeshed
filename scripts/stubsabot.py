@@ -110,7 +110,9 @@ class PypiInfo:
 
     def get_release(self, *, version: VersionString) -> PypiReleaseDownload:
         # prefer wheels, since it's what most users will get / it's pretty easy to mess up MANIFEST
-        release_info = sorted(self.releases[version], key=lambda x: bool(x["packagetype"] == "bdist_wheel"))[-1]
+        release_info = sorted(
+            self.releases[version], key=lambda x: x["packagetype"] == "bdist_wheel"
+        )[-1]
         return PypiReleaseDownload(
             url=release_info["url"],
             packagetype=release_info["packagetype"],
@@ -495,8 +497,10 @@ def get_origin_owner() -> str:
     output = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True).strip()
     match = re.match(r"(git@github.com:|https://github.com/)(?P<owner>[^/]+)/(?P<repo>[^/\s]+)", output)
     assert match is not None, f"Couldn't identify origin's owner: {output!r}"
-    assert match.group("repo").removesuffix(".git") == "typeshed", f'Unexpected repo: {match.group("repo")!r}'
-    return match.group("owner")
+    assert (
+        match["repo"].removesuffix(".git") == "typeshed"
+    ), f'Unexpected repo: {match["repo"]!r}'
+    return match["owner"]
 
 
 async def create_or_update_pull_request(*, title: str, body: str, branch_name: str, session: aiohttp.ClientSession) -> None:
