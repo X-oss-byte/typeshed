@@ -34,9 +34,7 @@ _PYTHON_VERSION = "3.7"
 def _parse_jsonc(json_text: str) -> str:
     # strip comments from the file
     lines = [line for line in json_text.split("\n") if not line.strip().startswith("//")]
-    # strip trailing commas from the file
-    valid_json = re.sub(r",(\s*?[\}\]])", r"\1", "\n".join(lines))
-    return valid_json
+    return re.sub(r",(\s*?[\}\]])", r"\1", "\n".join(lines))
 
 
 def _get_strict_params(stub_path: str) -> list[str]:
@@ -116,19 +114,18 @@ def main() -> None:
         if folder == "stdlib":
             print("\nRunning stubtest...")
             stubtest_result = subprocess.run([sys.executable, "tests/stubtest_stdlib.py", stub])
+        elif run_stubtest:
+            print("\nRunning stubtest...")
+            stubtest_result = subprocess.run([sys.executable, "tests/stubtest_third_party.py", stub])
         else:
-            if run_stubtest:
-                print("\nRunning stubtest...")
-                stubtest_result = subprocess.run([sys.executable, "tests/stubtest_third_party.py", stub])
-            else:
-                print(
-                    colored(
-                        f"\nSkipping stubtest for {stub!r}..."
-                        + "\nNOTE: Running third-party stubtest involves downloading and executing arbitrary code from PyPI."
-                        + f"\nOnly run stubtest if you trust the {stub!r} package.",
-                        "yellow",
-                    )
+            print(
+                colored(
+                    f"\nSkipping stubtest for {stub!r}..."
+                    + "\nNOTE: Running third-party stubtest involves downloading and executing arbitrary code from PyPI."
+                    + f"\nOnly run stubtest if you trust the {stub!r} package.",
+                    "yellow",
                 )
+            )
     else:
         print(colored("\nSkipping stubtest since mypy failed.", "yellow"))
 

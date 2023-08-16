@@ -180,8 +180,7 @@ def run_testcases(
     else:
         custom_typeshed = tempdir / TYPESHED
         env_vars["MYPYPATH"] = os.pathsep.join(map(str, custom_typeshed.glob("stubs/*")))
-        has_non_types_dependencies = (tempdir / VENV_DIR).exists()
-        if has_non_types_dependencies:
+        if has_non_types_dependencies := (tempdir / VENV_DIR).exists():
             python_exe = VenvInfo.of_existing_venv(tempdir / VENV_DIR).python_exe
         else:
             python_exe = sys.executable

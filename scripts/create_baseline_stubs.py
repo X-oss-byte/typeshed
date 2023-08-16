@@ -33,9 +33,7 @@ def search_pip_freeze_output(project: str, output: str) -> tuple[str, str] | Non
     # "typed-ast", and vice versa.
     regex = "^(" + re.sub(r"[-_]", "[-_]", project) + ")==(.*)"
     m = re.search(regex, output, flags=re.IGNORECASE | re.MULTILINE)
-    if not m:
-        return None
-    return m.group(1), m.group(2)
+    return None if not m else (m[1], m[2])
 
 
 def get_installed_package_info(project: str) -> tuple[str, str] | None:
@@ -124,7 +122,7 @@ def create_metadata(project: str, stub_dir: str, version: str) -> None:
     if match is None:
         sys.exit(f"Error: Cannot parse version number: {version}")
     filename = os.path.join(stub_dir, "METADATA.toml")
-    version = match.group(0)
+    version = match[0]
     if os.path.exists(filename):
         return
     metadata = f'version = "{version}.*"'
